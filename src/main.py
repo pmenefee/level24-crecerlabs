@@ -1,6 +1,6 @@
-import VoiceRecognition.Controller  as Vr
-import SpeechRecognition.Controller as Sr
-import util.settings as settings
+# import Controllers.VoiceController  as Vr
+import Controllers.SpeechController as Sr
+import Util.settings as settings
 import sched
 import time
 
@@ -14,20 +14,20 @@ event_schedule = sched.scheduler(time.time, time.sleep)
 
 # SYSTEM
 print("Loading voice regocnition models.")
-Vr.Setup()
+# Vr.Setup()
 print("Calibrating ambient noise.")
-Sr.calibrate_ambient_noise()
+# Sr.calibrate_ambient_noise()
 
 # Main application loop
 # 1. Listen loop
 print("Listening...")
-def run():        
-    audio = Sr.capture_voice_input(mic_name, pause_threshold)
-    event_schedule.enter(0, 1, run, ())
+# def run():        
+#     audio = Sr.capture_voice_input(mic_name, pause_threshold)
+#     event_schedule.enter(0, 1, run, ())
 
 
-event_schedule.enter(0, 1, run, ())
-event_schedule.run()
+# event_schedule.enter(0, 1, run, ())
+# event_schedule.run()
 
 #====================================================================
 # Helper methods
