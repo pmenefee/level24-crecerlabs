@@ -1,4 +1,4 @@
-import SpeechController as sr
+import speech_recognition as sr
 import time, sys
 import Util.settings as settings
 import yaml

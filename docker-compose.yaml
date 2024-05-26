@@ -2,7 +2,10 @@ services:
   app:
     build: .
     container_name: crecerlabs-voiceapp
-    # command: uvicorn src.main:app --host 0.0.0.0 --port 80 --reload
+    # command: uvicorn src:main.py --host 0.0.0.0 --port 80 --reload
+    command: python src/main.py
+    # Overrides default command so things don't shut down after the process ends.
+    # command: /bin/sh -c "while sleep 1000; do :; done"
 
     ports:
       - 80:80

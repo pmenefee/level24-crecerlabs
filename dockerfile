@@ -13,7 +13,7 @@ COPY ./requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application to the container.
-COPY ./src ./src
+COPY ./level24-crecerlabs/src ./level24-crecerlabs/src
 
 # Setup services
 # CMD ["uvicorn", "src.main:app","-host","0.0.0.0","--port","80","--reload"]
