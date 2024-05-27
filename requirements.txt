@@ -1,5 +1,8 @@
 ffmpeg < 4.4
+matplotlib==3.8
 diart
 SpeechRecognition
 uvicorn
 pyaudio
+pyannote.audio
+whisper-timestamped

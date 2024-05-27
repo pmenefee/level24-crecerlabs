@@ -1,0 +1,9 @@
+commands:
+  greetings:
+    word: ["hello","yo","hey"]
+  weather:
+      triggerword: "weather"
+      action: "open url"
+  quit:
+      triggerword: ["quit","stop"]
+      action: "close app"

@@ -2,7 +2,7 @@ import Controllers.VoiceController  as Vr
 import Controllers.SpeechController as Sr
 import Util.settings as settings
 import sched
-import time
+import time, os
 
 global app_name
 
@@ -11,23 +11,26 @@ mic_name = "Headset Microphone (CORSAIR VOI"           # Leave blank to use acti
 pause_threshold = .5   # seconds (float)
 event_schedule = sched.scheduler(time.time, time.sleep)
 
+if(settings.test_controller=="VR"):
+    # Capture audio
+    audio_data = Vr.capture_audio()
+    temp_wav_file_path = Vr.save_audio(audio_data)
 
-# SYSTEM
-print("Loading voice regocnition models.")
-Vr.Setup()
-print("Calibrating ambient noise.")
-# Sr.calibrate_ambient_noise()
+    Vr.run_diarization(temp_wav_file_path)
+else:
+    print("Calibrating ambient noise.")
+    Sr.calibrate_ambient_noise()
 
-# Main application loop
-# 1. Listen loop
-print("Listening...")
-def run():        
-    audio = Sr.capture_voice_input(mic_name, pause_threshold)
+    # Main application loop
+    # 1. Listen loop
+    print("Listening...")
+    def run():        
+        audio = Sr.capture_voice_input(mic_name, pause_threshold)
+        event_schedule.enter(0, 1, run, ())
+
+
     event_schedule.enter(0, 1, run, ())
-
-
-event_schedule.enter(0, 1, run, ())
-event_schedule.run()
+    event_schedule.run()
 
 #====================================================================
 # Helper methods

@@ -1,21 +1,22 @@
 import speech_recognition as sr
-import time, sys
+import Controllers.VoiceController  as Vr
+import time, sys, os
 import Util.settings as settings
 import yaml
-import collections.abc
+from diart import SpeakerDiarization
+from diart.sources import MicrophoneAudioSource
+from diart.inference  import StreamingInference
 
 recognizer = sr.Recognizer()
 
 
 def callback(recognizer, audio):
-    # 2. Voice detected
+    # Voice detected
     text = convert_voice_to_text(audio)
     if(settings.output_to_concole):
         print(text)
-    # 3. Compare to voice catalog
-        # TODO
     
-    # 6. Process Command
+    # Process Command
     # Regulate command flag.  This requires a word pair [GREETING, APP_NAME] to become active.  
     command_listen = False
     command_mode = False 
@@ -36,7 +37,7 @@ def capture_voice_input(mic_name, pause_threshold):
     recognizer.pause_threshold = pause_threshold  
     stop_listening = recognizer.listen_in_background(sr.Microphone() ,callback)
     time.sleep(pause_threshold) # this seems to improve detection.  Setting the value too small and nothing is detected.
-    
+        
     with sr.Microphone() as source:        
         audio = recognizer.listen(source)
 
@@ -59,6 +60,7 @@ def convert_voice_to_text(audio):
 def process_voice_command(text):
     sentance = text.split(" ")
     trigger = ""    
+    
     
     with open(settings.command_file, 'r') as f:
             commands = yaml.load(f, Loader=yaml.FullLoader)
