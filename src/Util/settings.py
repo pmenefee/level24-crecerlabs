@@ -13,4 +13,4 @@ hugging_face_token = "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"    # HF token
 
 # DEBUGING
 output_to_concole = True            # Output the audio text to the console.
-test_controller = "SR"              # which stream to test.  [SR | VR]  SR = Speech, VR = Voice
+test_controller = "VR"              # which stream to test.  [SR | VR]  SR = Speech, VR = Voice

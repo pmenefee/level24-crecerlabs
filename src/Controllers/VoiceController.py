@@ -11,7 +11,7 @@ import pyaudio, wave
 import numpy as np
 import Util
 import Util.settings
-
+import os
 
 
 # Initialize PyAudio
@@ -22,7 +22,7 @@ FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 CHUNK = 1024
-RECORD_SECONDS = 20  # Adjust as needed
+RECORD_SECONDS = 10  # Adjust as needed
 
 def capture_audio():
     stream = audio.open(format=FORMAT,
@@ -40,7 +40,8 @@ def capture_audio():
 
     stream.stop_stream()
     stream.close()
-    
+
+    # run_diarization(b''.join(frames))
 
     return b''.join(frames)
 
@@ -78,4 +79,6 @@ def run_diarization(temp_wav_file_path):
 
     # Cleanup
     audio.terminate()
+    os.remove(temp_wav_file_path)
+
 
