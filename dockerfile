@@ -15,9 +15,11 @@ RUN pip install --upgrade pip
 WORKDIR /code
 
 # Install Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ./requirements.txt ./
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt --progress-bar=on
 
-COPY ./src ./src
+COPY ./app ./app
 
-CMD ["python", "./main.py"]
+ENV PYTHONPATH /code/app
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

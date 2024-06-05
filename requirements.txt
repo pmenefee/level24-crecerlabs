@@ -1,8 +1,20 @@
+# ML
 ffmpeg < 4.4
 matplotlib==3.8
+numpy
+sounddevice
 diart
 SpeechRecognition
 uvicorn
 pyaudio
 pyannote.audio
+
+# API
 whisper-timestamped
+fastapi
+uvicorn
+flask
+flask-socketio
+
+# Debug DO NOT REMOVE
+debugpy

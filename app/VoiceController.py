@@ -9,8 +9,7 @@ from diart.sinks import RTTMWriter
 from tempfile import NamedTemporaryFile
 import pyaudio, wave
 import numpy as np
-import Util
-import Util.settings
+import settings
 import os
 
 
