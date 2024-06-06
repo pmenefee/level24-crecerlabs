@@ -10,3 +10,11 @@ services:
       - 5678:5678 # Debugging. ** REMOVE FOR PRODUCTION **
     volumes:
       - .:/code
+    devices:
+      - /dev/snd:/dev/snd
+    environment:
+      - PYHTONNUNBUFFERED=1
+    #Add necessary capablities and privileges
+    cap_add:
+      - SYS_ADMIN
+    privileged: true

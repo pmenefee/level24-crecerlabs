@@ -62,7 +62,7 @@ def save_audio(audio_data):
 def run_diarization(temp_wav_file_path):
     try:
         # Initialize the diarization pipeline
-        inference = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=Util.settings.hugging_face_token)
+        inference = Pipeline.from_pretrained("pyannote/speaker-diarization-3.1", use_auth_token=settings.hugging_face_token)
 
         # Run the pipeline on the temporary audio file
         diarization = inference(temp_wav_file_path)

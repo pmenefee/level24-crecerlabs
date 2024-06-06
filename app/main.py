@@ -1,29 +1,39 @@
-from typing import Optional
-from fastapi import FastAPI
-from . import settings
-from . import VoiceController  as Vr
-import sys
-import os
-import debugpy  ## REQUIRED FOR REMOTE DEBUGGING
+import VoiceController  as Vr
+import SpeechController as Sr
+import settings as settings
+import sched
+import time, os
 
-def main():
-    # print("Current Working Directory:", os.getcwd())
-    # print("Python Path:", sys.path)
-    debugpy.listen(("0.0.0.0", 5678))
+global app_name
 
-    if(settings.test_controller=="VR"):
-        # Capture audio
-        print("Initiating voice controller.")
-        audio_data = Vr.capture_audio()
-        temp_wav_file_path = Vr.save_audio(audio_data)
-    else:
-        print("Calibrating ambient noise.")
+# Setup Parameters
+mic_name = "Headset Microphone (CORSAIR VOI"           # Leave blank to use active mic.   
+pause_threshold = .5   # seconds (float)
+event_schedule = sched.scheduler(time.time, time.sleep)
 
-app = FastAPI()
+if(settings.test_controller=="VR"):
+    # Capture audio
+    audio_data = Vr.capture_audio()
+    temp_wav_file_path = Vr.save_audio(audio_data)
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+    Vr.run_diarization(temp_wav_file_path)
+else:
+    print("Calibrating ambient noise.")
+    Sr.calibrate_ambient_noise()
 
-if __name__ == "__main__":
-    main()
+    # Main application loop
+    # 1. Listen loop
+    print("Listening...")
+    def run():        
+        audio = Sr.capture_voice_input(mic_name, pause_threshold)
+        event_schedule.enter(0, 1, run, ())
+
+
+    event_schedule.enter(0, 1, run, ())
+    event_schedule.run()
+
+#====================================================================
+# Helper methods
+#====================================================================
+
+#  print(ut.Environment.ListMics())   # List registered mic devices.

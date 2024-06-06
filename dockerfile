@@ -4,7 +4,9 @@ FROM python:3.10
 RUN apt-get update && \
     apt-get install -y \
     build-essential \
+    alsa-utils \
     portaudio19-dev \
+    libasound2-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
