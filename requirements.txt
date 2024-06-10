@@ -8,6 +8,18 @@ SpeechRecognition
 uvicorn
 pyaudio
 pyannote.audio
+pyAudioAnalysis
+hmmlearn
+eyed3
+pydub
+imblearn
+plotly
+
+# Have to downgrade to match HF svc trained models.
+# scikit-learn==0.24.2
+
+# Data
+pymongo
 
 # API
 whisper-timestamped

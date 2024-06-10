@@ -13,6 +13,15 @@ RUN apt-get update && \
 # Update pip to the latest version
 RUN pip install --upgrade pip
 
+# Create a non-root user to use audio
+RUN useradd -ms /bin/bash audiouser
+
+# Add the user to the audio group
+RUN usermod -aG audio audiouser
+
+# Switch to the non-root user
+USER audiouser
+
 # Create a directory for the application
 WORKDIR /code
 
@@ -20,8 +29,11 @@ WORKDIR /code
 COPY ./requirements.txt ./
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt --progress-bar=on
 
-COPY ./app ./app
+COPY --chown=myuser:myuser ./app ./app
 
 ENV PYTHONPATH /code/app
+
+# Ensure the local bin is in PATH
+ENV PATH="/home/audiouser/.local/bin:${PATH}"
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]

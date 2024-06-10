@@ -11,9 +11,12 @@ services:
     volumes:
       - .:/code
     devices:
-      - /dev/snd:/dev/snd
+      - "/dev/snd:/dev/snd" # Linux host mappping
     environment:
       - PYHTONNUNBUFFERED=1
+      - PULSE_SERVER=unix:${XDG_RUNTIME_DIR}/pulse/native
+    stdin_open: true # This is required for some interactive applications
+    tty: true
     #Add necessary capablities and privileges
     cap_add:
       - SYS_ADMIN
