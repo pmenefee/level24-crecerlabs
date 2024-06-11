@@ -1,39 +1,52 @@
-import VoiceController  as Vr
+# main.py
+import VoiceController
+import Settings
 import SpeechController as Sr
-import settings as settings
-import sched
-import time, os
+import threading
 
-global app_name
+if __name__ == "__main__":
+    # while True:        
+        print("1. Identify speakers")
+        print("2. Take commands")        
+        print("3. Itentify & Take commands")
+        print("===========================")
+        print("4. Record new speaker")
+        print("5. List devices")
+        choice = input("Enter your choice: ")
+        
+        if choice == '4':
+            print('Read one of the following sentences.')
+            print('============================================')
+            print('The cat sat on the mat.')
+            print('The sun sets in the west.')
+            print('She sells seashells by the seashore.')
+            print('It rained heavily last night.')
+            print('I love to read books.')
+            print('The quick brown fox jumps over the lazy dog.')
+            print('He drives a blue car.')
+            print('The coffee is too hot.')
+            print('Please close the window.')
+            print('I will call you tomorrow.')
+            VoiceController.record_new_speaker()
+        elif choice == '1':
+            VoiceController.identify_speakers()
+        elif choice == '2':
+            Sr.capture_voice_input("Headset Microphone (CORSAIR VOI", .5)
+        elif choice == '3':
+            # Create threads for PyAudio and SpeechRecognition
+            pyaudio_thread = threading.Thread(target=VoiceController.identify_speakers())
+            speechrec_thread = threading.Thread(target=Sr.capture_voice_input(Settings.mic_name, Settings.pause_threshold))
 
-# Setup Parameters
-mic_name = "Headset Microphone (CORSAIR VOI"           # Leave blank to use active mic.   
-pause_threshold = .5   # seconds (float)
-event_schedule = sched.scheduler(time.time, time.sleep)
+            # Start both threads
+            pyaudio_thread.start()
+            speechrec_thread.start()
 
-if(settings.test_controller=="VR"):
-    # Capture audio
-    audio_data = Vr.capture_audio()
-    temp_wav_file_path = Vr.save_audio(audio_data)
-
-    Vr.run_diarization(temp_wav_file_path)
-else:
-    print("Calibrating ambient noise.")
-    Sr.calibrate_ambient_noise()
-
-    # Main application loop
-    # 1. Listen loop
-    print("Listening...")
-    def run():        
-        audio = Sr.capture_voice_input(mic_name, pause_threshold)
-        event_schedule.enter(0, 1, run, ())
-
-
-    event_schedule.enter(0, 1, run, ())
-    event_schedule.run()
-
-#====================================================================
-# Helper methods
-#====================================================================
-
-#  print(ut.Environment.ListMics())   # List registered mic devices.
+            # Wait for both threads to complete
+            pyaudio_thread.join()
+            speechrec_thread.join()
+        elif choice == '4':
+             VoiceController.record_new_speaker()
+        elif choice == '5':
+            VoiceController.list_devices()     
+        else:
+            print("Invalid choice. Please try again.")

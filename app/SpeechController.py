@@ -1,23 +1,26 @@
 import speech_recognition as sr
 import VoiceController  as Vr
 import time, sys, os
-import settings as settings
+import Settings as settings
 import yaml
 from diart import SpeakerDiarization
 from diart.sources import MicrophoneAudioSource
 from diart.inference  import StreamingInference
+import io
+import pyaudio
+import wave
 
 recognizer = sr.Recognizer()
 
 
 def callback(recognizer, audio):
     # Voice detected
+    # audio = <class 'speech_recognition.audio.AudioData'>
+
     text = convert_voice_to_text(audio)
     if(settings.output_to_concole):
         print(text)
-    
-    # Process Command
-    # Regulate command flag.  This requires a word pair [GREETING, APP_NAME] to become active.  
+        
     command_listen = False
     command_mode = False 
 
@@ -48,6 +51,7 @@ def capture_voice_input(mic_name, pause_threshold):
 
 def convert_voice_to_text(audio):
     try:
+        
         text = recognizer.recognize_google(audio)        
 
     except sr.UnknownValueError:  # Some audio came through it could not process to text
@@ -79,3 +83,8 @@ def process_voice_command(text):
 def calibrate_ambient_noise():
     with sr.Microphone() as source:
         recognizer.adjust_for_ambient_noise(source)
+
+def convert_bytes_to_audio_data(sound_bytes):
+    # Read audio data from the PyAudio stream
+    audio_data = sr.AudioData(sound_bytes, 16000, 1)
+    return audio_data
