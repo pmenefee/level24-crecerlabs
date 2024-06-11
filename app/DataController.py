@@ -24,6 +24,6 @@ def compare_with_stored_embeddings(new_embedding):  # Adjusted threshold
         print(f"Similarity with {record['speaker_id']}: {similarity}")  # Debugging print
 
         # Compare the cosine similarity with the hardcoded threshold.
-        if similarity > settings.similarity_threshold:
+        if similarity > Settings.similarity_threshold:
             return record['speaker_id']
     return None
