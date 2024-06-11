@@ -1,6 +1,6 @@
 # main.py
 import VoiceController
-import settings
+import Settings
 import SpeechController as Sr
 import threading
 
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         elif choice == '3':
             # Create threads for PyAudio and SpeechRecognition
             pyaudio_thread = threading.Thread(target=VoiceController.identify_speakers())
-            speechrec_thread = threading.Thread(target=Sr.capture_voice_input(settings.mic_name, settings.pause_threshold))
+            speechrec_thread = threading.Thread(target=Sr.capture_voice_input(Settings.mic_name, Settings.pause_threshold))
 
             # Start both threads
             pyaudio_thread.start()
@@ -44,6 +44,8 @@ if __name__ == "__main__":
             # Wait for both threads to complete
             pyaudio_thread.join()
             speechrec_thread.join()
+        elif choice == '4':
+             VoiceController.record_new_speaker()
         elif choice == '5':
             VoiceController.list_devices()     
         else:

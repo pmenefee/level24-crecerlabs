@@ -1,7 +1,7 @@
 import speech_recognition as sr
 import VoiceController  as Vr
 import time, sys, os
-import settings as settings
+import Settings as settings
 import yaml
 from diart import SpeakerDiarization
 from diart.sources import MicrophoneAudioSource
@@ -15,19 +15,12 @@ recognizer = sr.Recognizer()
 
 def callback(recognizer, audio):
     # Voice detected
-    # print(type(audio)) # <class 'speech_recognition.audio.AudioData'>
+    # audio = <class 'speech_recognition.audio.AudioData'>
 
     text = convert_voice_to_text(audio)
     if(settings.output_to_concole):
         print(text)
-
-    # Capture audio
-    # audio_data = Vr.capture_audio()
-    # temp_wav_file_path = Vr.save_audio(audio_data)
-    # Vr.run_diarization(temp_wav_file_path)
-    
-    # Process Command
-    # Regulate command flag.  This requires a word pair [GREETING, APP_NAME] to become active.  
+        
     command_listen = False
     command_mode = False 
 
