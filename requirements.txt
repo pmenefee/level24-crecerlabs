@@ -1,6 +1,4 @@
-# ML
 ffmpeg < 4.4
-matplotlib==3.8
 numpy
 sounddevice
 diart
@@ -12,21 +10,17 @@ pyAudioAnalysis
 hmmlearn
 eyed3
 pydub
+jinja2
 imblearn
 plotly
-
-# Have to downgrade to match HF svc trained models.
-# scikit-learn==0.24.2
-
-# Data
+matplotlib==3.8
 pymongo
-
-# API
 whisper-timestamped
 fastapi
 uvicorn
 flask
 flask-socketio
-
-# Debug DO NOT REMOVE
+flask-sockets
+websockets
+gevent
 debugpy

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microphone to WebSocket</title>
+</head>
+<body>
+    <h1>Microphone to WebSocket</h1>
+    <button id="start">Start Streaming</button>
+    <button id="stop" disabled>Stop Streaming</button>
+
+    <script>
+        let audioContext;
+        let mediaStream;
+        let mediaStreamSource;
+        let scriptProcessor;
+        let websocket;
+
+        const startButton = document.getElementById('start');
+        const stopButton = document.getElementById('stop');
+
+        startButton.onclick = async () => {
+            startButton.disabled = true;
+            stopButton.disabled = false;
+
+            try {
+                // Get access to the microphone
+                mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                // Create an audio context
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Create a WebSocket connection
+                websocket = new WebSocket('ws://localhost:8000/ws/bytestream');
+                websocket.binaryType = 'arraybuffer';
+
+                websocket.onopen = () => {
+                    console.log('WebSocket connection established');
+                };
+
+                websocket.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+
+                // Create a MediaStreamSource from the mediaStream
+                mediaStreamSource = audioContext.createMediaStreamSource(mediaStream);
+
+                // Create a ScriptProcessorNode
+                scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+
+                // Process audio data
+                scriptProcessor.onaudioprocess = (audioProcessingEvent) => {
+                    const inputBuffer = audioProcessingEvent.inputBuffer;
+                    const inputData = inputBuffer.getChannelData(0);
+                    
+                    // Convert Float32Array to ArrayBuffer
+                    const buffer = new ArrayBuffer(inputData.length * 2);
+                    const view = new DataView(buffer);
+                    
+                    for (let i = 0; i < inputData.length; i++) {
+                        view.setInt16(i * 2, inputData[i] * 0x7FFF, true); // Convert to 16-bit PCM
+                    }
+
+                    // Send the audio data to the WebSocket server
+                    if (websocket.readyState === WebSocket.OPEN) {
+                        websocket.send(buffer);
+                    }
+                };
+
+                // Connect the MediaStreamSource to the ScriptProcessorNode
+                mediaStreamSource.connect(scriptProcessor);
+                scriptProcessor.connect(audioContext.destination);
+
+            } catch (err) {
+                console.error('Error accessing the microphone:', err);
+                startButton.disabled = false;
+                stopButton.disabled = true;
+            }
+        };
+
+        stopButton.onclick = () => {
+            startButton.disabled = false;
+            stopButton.disabled = true;
+
+            if (scriptProcessor) {
+                scriptProcessor.disconnect();
+                scriptProcessor.onaudioprocess = null;
+                scriptProcessor = null;
+            }
+
+            if (mediaStreamSource) {
+                mediaStreamSource.disconnect();
+                mediaStreamSource = null;
+            }
+
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+
+            if (audioContext) {
+                audioContext.close();
+                audioContext = null;
+            }
+
+            if (websocket) {
+                websocket.close();
+                websocket = null;
+            }
+
+            console.log('Streaming stopped');
+        };
+    </script>
+</body>
+</html>

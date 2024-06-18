@@ -1,52 +1,33 @@
-# main.py
-import VoiceController
-import Settings
-import SpeechController as Sr
-import threading
+import asyncio
+from fastapi import FastAPI, WebSocket
+from fastapi.responses import HTMLResponse, UJSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from starlette.requests import Request
 
-if __name__ == "__main__":
-    # while True:        
-        print("1. Identify speakers")
-        print("2. Take commands")        
-        print("3. Itentify & Take commands")
-        print("===========================")
-        print("4. Record new speaker")
-        print("5. List devices")
-        choice = input("Enter your choice: ")
-        
-        if choice == '4':
-            print('Read one of the following sentences.')
-            print('============================================')
-            print('The cat sat on the mat.')
-            print('The sun sets in the west.')
-            print('She sells seashells by the seashore.')
-            print('It rained heavily last night.')
-            print('I love to read books.')
-            print('The quick brown fox jumps over the lazy dog.')
-            print('He drives a blue car.')
-            print('The coffee is too hot.')
-            print('Please close the window.')
-            print('I will call you tomorrow.')
-            VoiceController.record_new_speaker()
-        elif choice == '1':
-            VoiceController.identify_speakers()
-        elif choice == '2':
-            Sr.capture_voice_input("Headset Microphone (CORSAIR VOI", .5)
-        elif choice == '3':
-            # Create threads for PyAudio and SpeechRecognition
-            pyaudio_thread = threading.Thread(target=VoiceController.identify_speakers())
-            speechrec_thread = threading.Thread(target=Sr.capture_voice_input(Settings.mic_name, Settings.pause_threshold))
+app = FastAPI()
 
-            # Start both threads
-            pyaudio_thread.start()
-            speechrec_thread.start()
+templates = Jinja2Templates(directory="app/templates")
 
-            # Wait for both threads to complete
-            pyaudio_thread.join()
-            speechrec_thread.join()
-        elif choice == '4':
-             VoiceController.record_new_speaker()
-        elif choice == '5':
-            VoiceController.list_devices()     
-        else:
-            print("Invalid choice. Please try again.")
+@app.get("/", response_class=HTMLResponse)
+async def read_root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+@app.websocket("/ws/bytestream")
+async def websocket_bytestream(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_bytes()
+        print(data)
+        await websocket.send_bytes(data)  # Echoing back the bytestream
+
+@app.websocket("/ws/textstream")
+async def websocket_textstream(websocket: WebSocket):
+    await websocket.accept()
+    for i in range(100):
+        await websocket.send_text(f"Message {i}")
+        await asyncio.sleep(1)
+
+if __name__ == '__main__':
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
