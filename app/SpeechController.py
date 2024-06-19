@@ -1,7 +1,7 @@
 import speech_recognition as sr
 import VoiceController  as Vr
 import time, sys, os
-import Settings as settings
+import settings as settings
 import yaml
 from diart import SpeakerDiarization
 from diart.sources import MicrophoneAudioSource

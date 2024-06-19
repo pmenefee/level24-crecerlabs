@@ -1,6 +1,6 @@
 # main.py
 import VoiceController
-import Settings
+import settings
 import SpeechController as Sr
 import threading
 
