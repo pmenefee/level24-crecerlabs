@@ -3,12 +3,6 @@ import VoiceController  as Vr
 import time, sys, os
 import Settings as settings
 import yaml
-from diart import SpeakerDiarization
-from diart.sources import MicrophoneAudioSource
-from diart.inference  import StreamingInference
-import io
-import pyaudio
-import wave
 
 recognizer = sr.Recognizer()
 

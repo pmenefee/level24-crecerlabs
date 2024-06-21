@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microphone to WebSocket</title>
+    <title>Crecer Labs audio to text</title>
 </head>
 <body>
-    <h1>Microphone to WebSocket</h1>
+    <h1>Cffrecer Labs audio to text</h1>
     <button id="start">Start Streaming</button>
     <button id="stop" disabled>Stop Streaming</button>
+    <h2>Received Text:</h2>
+    <div id="textOutput"></div>
 
     <script>
         let audioContext;
         let mediaStream;
         let mediaStreamSource;
         let scriptProcessor;
-        let websocket;
+        let audioWebSocket;
+        let textWebSocket;
 
         const startButton = document.getElementById('start');
         const stopButton = document.getElementById('stop');
+        const textOutput = document.getElementById('textOutput');
 
         startButton.onclick = async () => {
             startButton.disabled = true;
@@ -31,16 +35,16 @@
                 // Create an audio context
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-                // Create a WebSocket connection
-                websocket = new WebSocket('ws://localhost:8000/ws/bytestream');
-                websocket.binaryType = 'arraybuffer';
+                // Create a WebSocket connection for audio data
+                audioWebSocket = new WebSocket('ws://localhost:8000/ws/bytestream');
+                audioWebSocket.binaryType = 'arraybuffer';
 
-                websocket.onopen = () => {
-                    console.log('WebSocket connection established');
+                audioWebSocket.onopen = () => {
+                    console.log('Audio WebSocket connection established');
                 };
 
-                websocket.onerror = (error) => {
-                    console.error('WebSocket error:', error);
+                audioWebSocket.onerror = (error) => {
+                    console.error('Audio WebSocket error:', error);
                 };
 
                 // Create a MediaStreamSource from the mediaStream
@@ -63,14 +67,32 @@
                     }
 
                     // Send the audio data to the WebSocket server
-                    if (websocket.readyState === WebSocket.OPEN) {
-                        websocket.send(buffer);
+                    if (audioWebSocket.readyState === WebSocket.OPEN) {
+                        audioWebSocket.send(buffer);
                     }
                 };
 
                 // Connect the MediaStreamSource to the ScriptProcessorNode
                 mediaStreamSource.connect(scriptProcessor);
                 scriptProcessor.connect(audioContext.destination);
+
+                // Create a WebSocket connection for text data
+                textWebSocket = new WebSocket('ws://localhost:8000/ws/textstream');
+
+                textWebSocket.onopen = () => {
+                    console.log('Text WebSocket connection established');
+                };
+
+                textWebSocket.onmessage = (event) => {
+                    // Display the received text in real-time
+                    if(textOutput.innerText.length>1)
+                        textOutput.innerText += event.data + '\n';
+                        textOutput.scrollTop = textOutput.scrollHeight; // Auto-scroll to the bottom
+                };
+
+                textWebSocket.onerror = (error) => {
+                    console.error('Text WebSocket error:', error);
+                };
 
             } catch (err) {
                 console.error('Error accessing the microphone:', err);
@@ -104,9 +126,14 @@
                 audioContext = null;
             }
 
-            if (websocket) {
-                websocket.close();
-                websocket = null;
+            if (audioWebSocket) {
+                audioWebSocket.close();
+                audioWebSocket = null;
+            }
+
+            if (textWebSocket) {
+                textWebSocket.close();
+                textWebSocket = null;
             }
 
             console.log('Streaming stopped');

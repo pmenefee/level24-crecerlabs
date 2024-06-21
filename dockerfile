@@ -9,7 +9,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Update pip to the latest version
-# RUN pip install --upgrade pip
+RUN pip install --upgrade pip
 
 # Create a directory for the application
 WORKDIR /code

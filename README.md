@@ -91,3 +91,10 @@ docker compose down
 docker compose build --progress=plain
 docker ps
 docker system prune -a
+
+Open Source Libraries:
+DeepSpeech - Low end, TensorFlow
+Kaldi       - 
+Wav2Letter  - Facebook AI
+SpeechBrain - PyTorch
+Coqui STT   - Multi-lingual

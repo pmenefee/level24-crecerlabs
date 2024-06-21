@@ -24,3 +24,4 @@ flask-sockets
 websockets
 gevent
 debugpy
+pocketsphinx
