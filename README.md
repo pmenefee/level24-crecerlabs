@@ -85,3 +85,16 @@ Below is a diagram of the application.  Options 1 and 2 are only for debug, whil
 1. Have the threshold for acuratcy be trained and not hard-coded.
 2. Improve the speaker identification across all samples and not just the last.
 3. Provide API services for the speech and voice controllers that can be synced and better optimized for a proper GUI.
+
+docker compose up -d
+docker compose down
+docker compose build --progress=plain
+docker ps
+docker system prune -a
+
+Open Source Libraries:
+DeepSpeech - Low end, TensorFlow
+Kaldi       - 
+Wav2Letter  - Facebook AI
+SpeechBrain - PyTorch
+Coqui STT   - Multi-lingual
