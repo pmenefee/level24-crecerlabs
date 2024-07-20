@@ -22,4 +22,5 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt --progress-ba
 
 COPY ./app ./app
 
+# Run API
 CMD ["python", "app/main.py"]
