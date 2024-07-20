@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 import numpy as np
 from scipy.spatial.distance import cosine
-import Settings
+import settings
 
 # Connect to MongoDB
 client = MongoClient("mongodb://localhost:27017/")

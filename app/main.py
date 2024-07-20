@@ -19,6 +19,7 @@ import websockets
 from transformers  import WhisperProcessor, WhisperForConditionalGeneration
 
 
+
 class SharedState:
     def __init__(self):
         self.output_text = ""
